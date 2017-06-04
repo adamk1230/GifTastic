@@ -15,25 +15,39 @@ function displayTeamGif() {
 	}).done(function(response) {
 
 		
-
 		//div to hold all the gifs
 		dAll = $("<div>");
 
-		//div to hold the gif
-		dTag = $("<div>");
+		for (var i = 0; i < 10; i++) {
 
-		//Create div to hold and display the rating
-		dRating = $("<div>");
-		dRating.html("Rating: " + response.data[1].rating);
+			//div to hold the gif
+			dTag = $("<div class='gifs'>");
 
-		//Create div to hold and display the gif
-		dGif = $("<div>");
-		dGif.html("<img src='" + response.data[1].images.fixed_height_still.url + "'>");
+			//Create div to hold and display the rating
+			dRating = $("<div>");
+			dRating.append("Rating: " + response.data[i].rating);
 
-		//put the div dTag together
-		dTag.append(dRating);
-		dTag.append(dGif);
-		dAll.append(dTag)
+			//Create div to hold and display the gif
+			dGif = $("<div>");
+
+			var image = $("<img class='gif' data-state='still'>");
+			image.attr("src", response.data[i].images.fixed_height_still.url);
+			image.attr("data-still", response.data[i].images.fixed_height_still.url);
+			image.attr("data-animate", response.data[i].images.fixed_height.url)
+
+
+
+			dGif.append(image)
+
+
+			// dGif.append("<img src='" + response.data[i].images.fixed_height_still.url + "'>");
+			
+			//put the div dTag together
+			dTag.append(dRating);
+			dTag.append(dGif);
+			dAll.append(dTag);
+
+		}
 
 
 		$("#gifDiv").html(dAll);
@@ -75,4 +89,28 @@ $("#add-team").on("click", function(event) {
 //  click event listener 
 $(document).on("click", ".team", displayTeamGif);
 
+
+
+//animate on click
+$(document).on("click", ".gif", function() {
+
+	var state = $(this).attr("data-state");
+	var animateUrl = $(this).attr("data-animate");
+	var stillUrl = $(this).attr("data-still");
+
+	if (state === "still") {
+		$(this).attr("src", animateUrl);
+		$(this).attr("data-state", "animate");
+	}
+
+	if (state === "animate") {
+		$(this).attr("src", stillUrl);
+		$(this).attr("data-state", "still")
+	}
+
+}); // ends animate on click
+
+
+
+//renders buttons on load
 renderButtons();
